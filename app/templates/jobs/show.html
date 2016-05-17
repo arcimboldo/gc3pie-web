@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href={{url_for("static", filename="bootstrap.min.css")}}>
+    <script src={{url_for("static",filename="jquery-1.12.3.min.js")}}></script>
+    <script src={{url_for("static",filename="bootstrap.min.js")}}></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  
+  <body>
+    <a href={{url_for("jobs.list")}}>back to list of jobs</a>
+    <div class="container-fluid">
+      {% if msg %}
+      <div class="panel panel-danger">
+        <div class="panel-heading">{{msg}}</div>
+      </div>
+      {% endif %}
+      <h1>Info on job <i>"{{job.persistent_id}}"</i></h1>
+      <table class="table table-bordered">
+        <tbody>
+          <tr><th>Job id</th><td>{{job.persistent_id}}</td></tr>
+          <tr><th>Job name</th><td>{{job.jobname}}</td></tr>
+          <tr><th>status</th><td>{{state}}</td></tr>
+          <tr><th>exitcode</th><td>{{job.execution._exitcode}}</td></tr>
+          <tr><th>argumenrs</th><td><code>{{job.arguments|join(' ')}}</code></td></tr>
+          {% if job.inputs %}
+          <tr><th>inputs</th><td>
+              {% for k,v in job.inputs.items() %}
+              <code>{{k}}</code>
+              {% endfor %}
+            </td>
+          </tr>
+          {% endif %}
+          {% if job.outputs %}
+          <tr><th>outputs</th><td>
+              {% for k,v in job.outputs.items() %}
+              <code>{{k}}</code> downloaded as <code>{{v}}</code>
+              {% endfor %}
+            </td>
+          </tr>
+          {% endif %}
+          <tr><th>requested cores</th><td>{{job.requested_cores}}</td></tr>
+          <tr><th>requested memory</th><td>{{job.requested_memory}}</td></tr>
+          <tr><th>requested architecture</th><td>{{job.requested_architecture}}</td></tr>
+          <tr><th>requested walltime</th><td>{{job.requested_walltime}}</td></tr>
+          <tr><th>stdout</th><td><code>{{job.stdout}}<code></td></tr>
+          <tr><th>stderr</th><td><code>{{job.stderr}}<code></td></tr>
+          <tr><th>resource</th><td>{{job.resource}}</td></tr>
+          <tr><th>output_dir</th><td><code>{{job.output_dir}}</code></td></tr>
+          <tr><th>History</th><td>{% for line in job.execution.history %}
+                {{line}} <br />
+                {% endfor %}
+          </td></tr>
+          {% if job.tasks %}
+          <tr><th>Tasks</th>
+            <td>
+            {% for task in job.tasks %}
+            <a href={{url_for("jobs.show", jobid=task)}}>{{task}}</a><br />
+            {% endfor %}
+            </td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+      
+      <button type="button" class="btn btn-info"
+              data-toggle="collapse" data-target="#jobinfo">Show raw info</button>
+      <pre id="jobinfo" class="collapse">
+{{job_s}}
+      </pre>
+    </div>
+  </body>
+</html>

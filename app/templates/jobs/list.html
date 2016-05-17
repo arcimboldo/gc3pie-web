@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href={{url_for("static", filename="bootstrap.min.css")}}>
+    <script src={{url_for("static",filename="jquery-1.12.3.min.js")}}></script>
+    <script src={{url_for("static",filename="bootstrap.min.js")}}></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  
+  <body>
+      {% if msg %}
+      <div class="panel panel-danger">
+        <div class="panel-heading">{{msg}}</div>
+      </div>
+      {% endif %}
+    <h1>Jobs available at '{{config['GC3APP_DIR']}}'</h1>
+    <div class="container-fluid">
+      <table class="table table-hover table-bordered">
+        <thead>
+          <th>Job ID</th>
+          <th>jobname</th>
+          <th>status</th>
+          <th>exit code</th>
+          <th>cores</th>
+          <th>used cpu time</th>
+          <th>action</th>
+        </thead>
+        <tbody>
+          {% for job in jobs %}
+          {% set state=job.execution._state %}
+          {% if state == 'TERMINATED' %}{% if job.execution._exitcode
+          == 0 %}{% set statecss="success" %}{% else %}{% set
+          statecss="danger" %}{% endif %}
+          {% elif state in ['SUBMITTED', 'RUNNING'] %}{% set statecss="warning" %}
+          {% elif state == 'NEW' %}{% set statecss="success" %}
+          {% endif %}
+          <tr class={{statecss}}>
+            <td><a href="job/{{job.persistent_id}}">{{job.persistent_id}}</a></td>
+            <td>{{job.jobname}}</td>
+            <td>{{job.execution._state}}</td>
+            <td>{{job.execution._exitcode}}</td>
+            <td>{{job.execution.requested_cores}}</td>
+            <td>{{job.execution.used_cpu_time}}</td>
+            <td>
+            <form id="form-{{job.persistent_id}}" method="POST" role="form"
+                  class="form-inline"
+                  action="job/{{job.persistent_id}}">
+              <div class="btn-group">
+              <button class="btn dropdown-toggle" data-toggle="dropdown">
+                Action
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                  <input type="submit" class="form-control btn btn-link"
+                         name="action" value="resubmit" />
+                </li>
+                <li>
+                  <input type="submit" class="form-control btn btn-link"
+                         name="action" value="kill" />
+                </li>
+                <li>
+                  <input type="submit" class="form-control btn btn-link"
+                         name="action" value="remove" />
+                </li>
+              </ul>
+              </div>
+            </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>
