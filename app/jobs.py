@@ -70,7 +70,7 @@ def show(jobid):
     msg = request.args.get('msg')
 
     if request.method == 'GET':
-        job = yaml.load(server.show(jobid))
+        job = json.loads(server.json_show(jobid))
         job_s = json.dumps(job, indent=4)
         # Fix a few things...
         if 'arguments' in job:

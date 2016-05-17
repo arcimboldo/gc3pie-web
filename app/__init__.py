@@ -23,7 +23,7 @@ __docformat__ = 'reStructuredText'
 __author__ = 'Antonio Messina <antonio.s.messina@gmail.com>'
 
 from flask import Flask, render_template, redirect, url_for
-from .gc3iface.jobs import jobs
+from .jobs import jobs
 
 app = Flask(__name__)
 

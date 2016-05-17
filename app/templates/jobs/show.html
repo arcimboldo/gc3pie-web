@@ -20,8 +20,10 @@
         <tbody>
           <tr><th>Job id</th><td>{{job.persistent_id}}</td></tr>
           <tr><th>Job name</th><td>{{job.jobname}}</td></tr>
-          <tr><th>status</th><td>{{state}}</td></tr>
+          {% if job.execution %}
+          <tr><th>status</th><td>{{job.execution._state}}</td></tr>
           <tr><th>exitcode</th><td>{{job.execution._exitcode}}</td></tr>
+          {% endif %}
           <tr><th>argumenrs</th><td><code>{{job.arguments|join(' ')}}</code></td></tr>
           {% if job.inputs %}
           <tr><th>inputs</th><td>
@@ -45,12 +47,14 @@
           <tr><th>requested walltime</th><td>{{job.requested_walltime}}</td></tr>
           <tr><th>stdout</th><td><code>{{job.stdout}}<code></td></tr>
           <tr><th>stderr</th><td><code>{{job.stderr}}<code></td></tr>
-          <tr><th>resource</th><td>{{job.resource}}</td></tr>
           <tr><th>output_dir</th><td><code>{{job.output_dir}}</code></td></tr>
+          {% if job.execution %}
+          <tr><th>resource name</th><td>{{job.execution.resource_name}}</td></tr>
           <tr><th>History</th><td>{% for line in job.execution.history %}
                 {{line}} <br />
                 {% endfor %}
           </td></tr>
+          {% endif %}
           {% if job.tasks %}
           <tr><th>Tasks</th>
             <td>
